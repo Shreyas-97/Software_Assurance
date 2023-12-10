@@ -1,0 +1,42 @@
+# NoteTaker TSTL Harness
+
+# Import the NoteTaker class
+<: import note_taker.NoteTaker :>
+
+# Define the pool of objects
+pool: NoteTaker 1
+
+# Initialize the NoteTaker object
+init: n = NoteTaker()
+
+# Define actions
+[action]
+n.add_note(<str:title>, <str:content>)
+{precondition: title not in [note["title"] for note in n.notes]}
+{postcondition: any(note["title"] == title for note in n.notes)}
+
+[action]
+content = n.view_note(<str:title>)
+{precondition: title in [note["title"] for note in n.notes]}
+{postcondition: content == next(note["content"] for note in n.notes if note["title"] == title)}
+
+[action]
+n.edit_note(<str:title>, <str:new_content>)
+{precondition: title in [note["title"] for note in n.notes]}
+{postcondition: any(note["content"] == new_content for note in n.notes if note["title"] == title)}
+
+[action]
+n.delete_note(<str:title>)
+{precondition: title in [note["title"] for note in n.notes]}
+{postcondition: not any(note["title"] == title for note in n.notes)}
+
+[action]
+n.add_tag(<str:title>, <str:tag>)
+{precondition: title in [note["title"] for note in n.notes]}
+{postcondition: any(tag in note["tags"] for note in n.notes if note["title"] == title)}
+
+[action]
+n.set_priority(<str:title>, <int:priority>)
+{precondition: title in [note["title"] for note in n.notes]}
+{postcondition: any(note["priority"] == priority for note in n.notes if note["title"] == title)}
+
